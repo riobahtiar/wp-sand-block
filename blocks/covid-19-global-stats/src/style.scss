@@ -1,0 +1,79 @@
+
+.wsb-main-container {
+  padding: 20px 0;
+  width: 100%;
+  font-family: Arial, Helvetica, Arial, sans-serif;
+}
+
+.wsb {
+  $self: &;
+  width: 100%;
+  display: grid;
+  align-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  color: #ffffff;
+
+  #{$self}-card {
+	text-align: left;
+	padding: 15px;
+	display: flex;
+	flex-direction: row;
+
+	&__text {
+	  &Title {
+		font-weight: bold;
+		font-size: 16px;
+		margin-bottom: 20px;
+		margin-top: 6px;
+	  }
+
+	  &Number {
+		font-weight: bold;
+		font-size: 35px;
+	  }
+	}
+
+	&__icon {
+	  margin-left: auto;
+	  //padding: 20px 10px;
+	  &Img{
+		width: 35px;
+		height: auto;
+		opacity: .7;
+	  }
+	}
+  }
+
+
+  #{$self}-confirmed {
+	background: #14589d;
+  }
+
+  #{$self}-active {
+	background: #c69c05;
+  }
+
+  #{$self}-recovered {
+	background: #02985d;
+  }
+
+  #{$self}-deaths {
+	background: #c63434;
+  }
+
+
+  @media (min-width: 768px) {
+	//width: 750px;
+  }
+  @media (min-width: 992px) {
+	//width: 970px;
+  }
+  @media (min-width: 1200px) {
+	//width: 1170px;
+  }
+
+}
+
+
+
+
