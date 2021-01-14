@@ -11,28 +11,48 @@ namespace SandBlock\Core;
 use SandBlock\Helper;
 
 class Register_API {
-	public static $api_path = 'sand-block/v1';
+	public static $api_path = 'sand-block/v1/covid-19';
+	public static $fake_user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36';
 
+	/*
+	 * Loader
+	 */
 	public static function Init() {
 		add_action( 'rest_api_init', array( __CLASS__, 'c19_api_registration' ) );
 	}
 
+	/**
+	 * Register API
+	 */
 	public static function c19_api_registration() {
-		register_rest_route( self::$api_path, '/global-stats', array(
-			'methods'             => 'GET',
-			'callback'            => array( __CLASS__, 'c19_global_api_callback' ),
+		// Global Data
+		register_rest_route( self::$api_path, '/global', array(
+			'methods'             => \WP_REST_Server::READABLE,
+			'callback'            => [ __CLASS__, 'c19_global_api_callback' ],
+			'permission_callback' => '__return_true'
+		) );
+
+		// Country Data
+		register_rest_route( self::$api_path, '/country/(?P<country>[a-zA-Z0-9-]+)', array(
+			'methods'             => \WP_REST_Server::READABLE,
+			'callback'            => [ __CLASS__, 'c19_country_api_callback' ],
 			'permission_callback' => '__return_true'
 		) );
 	}
 
-	public static function c19_fetch_data( $endpoint = '/summary' ) {
-		$credential = get_option( 'sandblock_cv19_credentials' );
-		$args       = array(
-			'headers' => array(
-				'X-Access-Token' => $credential['Key'],
-			),
+	/**
+	 * API Fetcher
+	 *
+	 * @param string $endpoint
+	 *
+	 * @return false|mixed
+	 */
+	public static function c19_fetch_data( $endpoint = '/v3/covid-19/all' ) {
+		// Use fake user-agent value instead builtin WP user-agent to bypass cloudflare security rule
+		$args     = array(
+			'user-agent' => self::$fake_user_agent
 		);
-		$response   = wp_remote_get( COVID19_PUBLIC_API . $endpoint, $args );
+		$response = wp_remote_get( COVID19_PUBLIC_API . $endpoint, $args );
 		if ( is_wp_error( $response ) || 200 != wp_remote_retrieve_response_code( $response ) ) {
 			return false;
 		}
@@ -41,45 +61,70 @@ class Register_API {
 	}
 
 	/**
-	 * CB Response Data
+	 * Cache data and add header information
 	 *
-	 * @todo Move response header to global function that can used by other cb response
+	 * @param string $route
+	 * @param string $transient_name
 	 *
 	 * @return array
 	 */
 
-	public static function c19_get_global_data() {
-		$response                       = array();
-		$response['header']['api_name'] = __FUNCTION__;
-		$transient_name                 = 'cv19_global_data';
-		$data                           = get_transient( $transient_name );
+	public static function c19_get_data( $route = '', $transient_name = 'wsb_cv19_data' ) {
+		$data = get_transient( $transient_name );
 
-		// Check if data valid, and add header information
-		if ( is_array( $data ) && 0 != $data['Global']['NewConfirmed'] ) {
-			$response['header']['cached_response'] = 'yes';
-			$response['header']['date']            = $data['Date'];
-			$response['header']['process_time']    = (float) timer_stop( 0, 3 );
-			$response['data']                      = Helper\decamelize_key( $data['Global'] );
+		if ( is_array( $data ) && isset( $data['cases'] ) ) {
 
-			return $response;
+			return (array) Helper\reformat_response( array(
+				'cached_response' => 'yes',
+				'modified_at'     => $data['updated'],
+				'data'            => $data
+			) );
+
 		} else {
-			$data = self::c19_fetch_data( '/summary' );
+			$data = self::c19_fetch_data( $route );
+
+			if ( ! is_array( $data ) && ! isset( $data['cases'] ) ) {
+				return $data;
+			}
+
 			set_transient( $transient_name, $data, DEFAULT_TTL );
 
-			$response['header']['cached_response'] = 'no';
-			$response['header']['date']            = $data['Date'];
-			$response['header']['process_time']    = (float) timer_stop( 0, 3 );
-			$response['data']                      = Helper\decamelize_key( $data['Global'] );
+			return (array) Helper\reformat_response( array(
+				'cached_response' => 'no',
+				'modified_at'     => $data['updated'],
+				'data'            => $data
+			) );
 
-			return $response;
 		}
 	}
 
+	/**
+	 * Global Data Callback
+	 * @return \WP_Error | \WP_REST_Response
+	 */
 	public static function c19_global_api_callback() {
-		$data = self::c19_get_global_data();
+		$data = self::c19_get_data( '/v3/covid-19/all', 'wsb_cv19_global_data' );
 
 		if ( empty( $data ) ) {
-			return new \WP_Error( 'no_data', 'Oopss!! Data is not available or maybe the data provider website is down. check out https://api.covid19api.com/. Please try again later.', array( 'status' => 200 ) );
+			return new \WP_Error( 'no_data', 'Oopss!! Data is not available or maybe the data provider website is down. check out ' . COVID19_PUBLIC_API . '. Please try again later.', array( 'status' => 200 ) );
+		}
+
+		return new \WP_REST_Response( $data, 200 );
+	}
+
+	/**
+	 * Country Data Callback
+	 *
+	 * @param $request
+	 *
+	 * @return \WP_Error | \WP_REST_Response
+	 */
+	public static function c19_country_api_callback( $request ) {
+		$country = sanitize_title( $request['country'] );
+		$data = self::c19_get_data( '/v3/covid-19/countries/' . $country, 'wsb_cv19_data_country__' . $country );
+
+		if ( empty( $data ) ) {
+			return new \WP_Error( 'no_data', 'Oopss!! Data is not available or maybe the data provider website is down. check out ' . COVID19_PUBLIC_API . '. Please try again later.', array( 'status' => 200 ) );
 		}
 
 		return new \WP_REST_Response( $data, 200 );

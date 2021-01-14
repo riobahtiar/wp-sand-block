@@ -56,9 +56,11 @@ function covid_19_global_stats_render_callback( $block_attributes, $content ) {
 	</div>
 	';
 
-	return $content;
 
-//
+
+//	return $content;
+
+
 //    return sprintf(
 //        '<a class="wp-block-my-plugin-latest-post" href="%1$s">%2$s</a>',
 //        esc_url( get_permalink( $post_id ) ),

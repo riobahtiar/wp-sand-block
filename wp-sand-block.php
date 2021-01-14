@@ -16,7 +16,6 @@ define( 'WSB__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
 require_once( WSB__PLUGIN_DIR . 'includes/settings.php' );
 require_once( WSB__PLUGIN_DIR . 'includes/helper.php' );
-require_once( WSB__PLUGIN_DIR . 'includes/setup-data.php' );
 require_once( WSB__PLUGIN_DIR . 'includes/filters.php' );
 require_once( WSB__PLUGIN_DIR . 'includes/rest-api.php' );
 
@@ -25,22 +24,22 @@ require_once( WSB__PLUGIN_DIR . 'includes/rest-api.php' );
  */
 
 use SandBlock\Core\Register_API;
-use SandBlock\Core\SetupData;
+//use SandBlock\Core\SetupData;
 
 /**
  * Activate & Deactivate Hook
  */
-
-function activate_wp_sand_block() {
-	SetupData::activate();
-}
-
-function deactivate_wp_sand_block() {
-	SetupData::deactivate();
-}
-
-register_activation_hook( __FILE__, 'activate_wp_sand_block' );
-register_deactivation_hook( __FILE__, 'deactivate_wp_sand_block' );
+//
+//function activate_wp_sand_block() {
+//	SetupData::activate();
+//}
+//
+//function deactivate_wp_sand_block() {
+//	SetupData::deactivate();
+//}
+//
+//register_activation_hook( __FILE__, 'activate_wp_sand_block' );
+//register_deactivation_hook( __FILE__, 'deactivate_wp_sand_block' );
 
 /**
  * Register Function
