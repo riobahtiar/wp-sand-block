@@ -15,15 +15,8 @@
  * @return {WPElement} Element to render.
  */
 
-
-
-
 export default function save() {
-	return (
-		<div>
-			Halooo CV
-		</div>
-	);
+	return <div>Halooo CV</div>;
 }
 
 //

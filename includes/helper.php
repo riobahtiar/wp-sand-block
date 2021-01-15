@@ -15,10 +15,20 @@ namespace SandBlock\Helper;
  */
 
 function decamelize( $string ): string {
-	return strtolower( str_replace( ' ', '_', preg_replace( [
-		'/([a-z\d])([A-Z])/',
-		'/([^_])([A-Z][a-z])/'
-	], '$1_$2', $string ) ) );
+	return strtolower(
+		str_replace(
+			' ',
+			'_',
+			preg_replace(
+				array(
+					'/([a-z\d])([A-Z])/',
+					'/([^_])([A-Z][a-z])/',
+				),
+				'$1_$2',
+				$string
+			)
+		)
+	);
 }
 
 function decamelize_key( $arr, $ignore = array( 'date', 'updated' ) ): array {
@@ -46,7 +56,7 @@ function human_format( $arr = array(), $ignore = array( 'date', 'updated' ) ): a
 	$result = array();
 	foreach ( $arr as $item => $i ) {
 
-		if ( in_array( $item, $ignore ) || ! is_numeric($i) ) {
+		if ( in_array( $item, $ignore ) || ! is_numeric( $i ) ) {
 			continue;
 		}
 
@@ -69,8 +79,8 @@ function reformat_response(
 	$default = array(
 		'cached_response' => 'no',
 		'data'            => array(
-			'Not found'
-		)
+			'Not found',
+		),
 	)
 ): array {
 	$response                              = array();

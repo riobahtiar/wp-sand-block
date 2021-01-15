@@ -14,58 +14,56 @@ function covid_19_global_stats_render_callback( $block_attributes, $content ) {
 		<div class="wsb">
 			<div class="wsb-card wsb-confirmed">
 				<div class="wsb-card__text">
-					<h4 class="wsb-card__textTitle">' . __('Confirmed','wp-sand-block') . '</h4>
-					<span class="wsb-card__textNumber">'.number_format_i18n(99999999).'</span>
+					<h4 class="wsb-card__textTitle">' . __( 'Confirmed', 'wp-sand-block' ) . '</h4>
+					<span class="wsb-card__textNumber">' . number_format_i18n( 99999999 ) . '</span>
 				</div>
 				<div class="wsb-card__icon">
-					<img src="' .plugin_dir_url( __FILE__ ). 'covid-19-global-stats/src/img/virus.svg" class="wsb-card__iconImg" alt="">
+					<img src="' . plugin_dir_url( __FILE__ ) . 'covid-19-global-stats/src/img/virus.svg" class="wsb-card__iconImg" alt="">
 				</div>
 			</div>
 			<div class="wsb-card wsb-active">
 				<div class="wsb-card__text">
-					<h4 class="wsb-card__textTitle">' . __('Active Cases','wp-sand-block') . '</h4>
-					<span class="wsb-card__textNumber">'.number_format_i18n(9999999).'</span>
+					<h4 class="wsb-card__textTitle">' . __( 'Active Cases', 'wp-sand-block' ) . '</h4>
+					<span class="wsb-card__textNumber">' . number_format_i18n( 9999999 ) . '</span>
 				</div>
 				<div class="wsb-card__icon">
-					<img src="' .plugin_dir_url( __FILE__ ). 'covid-19-global-stats/src/img/sick.svg" class="wsb-card__iconImg" alt="">
+					<img src="' . plugin_dir_url( __FILE__ ) . 'covid-19-global-stats/src/img/sick.svg" class="wsb-card__iconImg" alt="">
 				</div>
 			</div>
 			<div class="wsb-card wsb-recovered">
 				<div class="wsb-card__text">
-					<h4 class="wsb-card__textTitle">' . __('Recovered','wp-sand-block') . '</h4>
-					<span class="wsb-card__textNumber">'.number_format_i18n(999999).'</span>
+					<h4 class="wsb-card__textTitle">' . __( 'Recovered', 'wp-sand-block' ) . '</h4>
+					<span class="wsb-card__textNumber">' . number_format_i18n( 999999 ) . '</span>
 				</div>
 				<div class="wsb-card__icon">
-					<img src="' .plugin_dir_url( __FILE__ ). 'covid-19-global-stats/src/img/heart.svg" class="wsb-card__iconImg" alt="">
+					<img src="' . plugin_dir_url( __FILE__ ) . 'covid-19-global-stats/src/img/heart.svg" class="wsb-card__iconImg" alt="">
 				</div>
 			</div>
 			<div class="wsb-card wsb-deaths">
 				<div class="wsb-card__text">
-					<h4 class="wsb-card__textTitle">' . __('Deaths','wp-sand-block') . '</h4>
-					<span class="wsb-card__textNumber">'.number_format_i18n(9999).'</span>
+					<h4 class="wsb-card__textTitle">' . __( 'Deaths', 'wp-sand-block' ) . '</h4>
+					<span class="wsb-card__textNumber">' . number_format_i18n( 9999 ) . '</span>
 				</div>
 				<div class="wsb-card__icon">
-					<img src="' .plugin_dir_url( __FILE__ ). 'covid-19-global-stats/src/img/warning.svg" class="wsb-card__iconImg" alt="">
+					<img src="' . plugin_dir_url( __FILE__ ) . 'covid-19-global-stats/src/img/warning.svg" class="wsb-card__iconImg" alt="">
 				</div>
 			</div>
 		</div>
 		<div class="wsb-notes">
-		Pembaruan Terakhir
+		Pembaruan Terakhir <pre>' . json_encode( $block_attributes ) . '</pre><hr><pre>' . json_encode( $content ) . '</pre>
 		<time>13 Januari 2021 16:32:27 +07:00</time>
 		</div>
 	</div>
+
 	';
 
+	return $content;
 
-
-//	return $content;
-
-
-//    return sprintf(
-//        '<a class="wp-block-my-plugin-latest-post" href="%1$s">%2$s</a>',
-//        esc_url( get_permalink( $post_id ) ),
-//        esc_html( get_the_title( $post_id ) )
-//    );
+	// return sprintf(
+	// '<a class="wp-block-my-plugin-latest-post" href="%1$s">%2$s</a>',
+	// esc_url( get_permalink( $post_id ) ),
+	// esc_html( get_the_title( $post_id ) )
+	// );
 }
 
 /**
@@ -79,7 +77,7 @@ function covid_19_global_stats_block_init() {
 	if ( ! function_exists( 'register_block_type' ) ) {
 		return;
 	}
-	$dir = dirname( __FILE__ );
+	$dir               = dirname( __FILE__ );
 	$script_asset_path = "$dir/covid-19-global-stats/build/index.asset.php";
 	if ( ! file_exists( $script_asset_path ) ) {
 		throw new Error(
@@ -87,8 +85,8 @@ function covid_19_global_stats_block_init() {
 		);
 	}
 
-	$index_js = 'covid-19-global-stats/build/index.js';
-	$script_asset = require( $script_asset_path );
+	$index_js     = 'covid-19-global-stats/build/index.js';
+	$script_asset = require $script_asset_path;
 	wp_register_script(
 		'covid-19-global-stats-block-editor',
 		plugins_url( $index_js, __FILE__ ),
@@ -112,11 +110,14 @@ function covid_19_global_stats_block_init() {
 		filemtime( "$dir/$style_css" )
 	);
 
-	register_block_type( 'wp-sand-block/covid-19-global-stats', array(
-		'editor_script' => 'covid-19-global-stats-block-editor',
-		'editor_style'  => 'covid-19-global-stats-block-editor',
-		'style'         => 'covid-19-global-stats-block',
-		'render_callback' => 'covid_19_global_stats_render_callback'
-	) );
+	register_block_type(
+		'wp-sand-block/covid-19-global-stats',
+		array(
+			'editor_script'   => 'covid-19-global-stats-block-editor',
+			'editor_style'    => 'covid-19-global-stats-block-editor',
+			'style'           => 'covid-19-global-stats-block',
+			'render_callback' => 'covid_19_global_stats_render_callback',
+		)
+	);
 }
 add_action( 'init', 'covid_19_global_stats_block_init' );

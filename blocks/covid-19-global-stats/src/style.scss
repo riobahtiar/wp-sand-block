@@ -10,7 +10,7 @@
   width: 100%;
   display: grid;
   align-items: center;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   color: #ffffff;
 
   #{$self}-card {

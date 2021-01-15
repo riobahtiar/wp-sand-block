@@ -11,7 +11,7 @@ namespace SandBlock\Core;
 use SandBlock\Helper;
 
 class Register_API {
-	public static $api_path = 'sand-block/v1/covid-19';
+	public static $api_path        = 'sand-block/v1/covid-19';
 	public static $fake_user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36';
 
 	/*
@@ -26,18 +26,26 @@ class Register_API {
 	 */
 	public static function c19_api_registration() {
 		// Global Data
-		register_rest_route( self::$api_path, '/global', array(
-			'methods'             => \WP_REST_Server::READABLE,
-			'callback'            => [ __CLASS__, 'c19_global_api_callback' ],
-			'permission_callback' => '__return_true'
-		) );
+		register_rest_route(
+			self::$api_path,
+			'/global',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( __CLASS__, 'c19_global_api_callback' ),
+				'permission_callback' => '__return_true',
+			)
+		);
 
 		// Country Data
-		register_rest_route( self::$api_path, '/country/(?P<country>[a-zA-Z0-9-]+)', array(
-			'methods'             => \WP_REST_Server::READABLE,
-			'callback'            => [ __CLASS__, 'c19_country_api_callback' ],
-			'permission_callback' => '__return_true'
-		) );
+		register_rest_route(
+			self::$api_path,
+			'/country/(?P<country>[a-zA-Z0-9-]+)',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( __CLASS__, 'c19_country_api_callback' ),
+				'permission_callback' => '__return_true',
+			)
+		);
 	}
 
 	/**
@@ -50,7 +58,7 @@ class Register_API {
 	public static function c19_fetch_data( $endpoint = '/v3/covid-19/all' ) {
 		// Use fake user-agent value instead builtin WP user-agent to bypass cloudflare security rule
 		$args     = array(
-			'user-agent' => self::$fake_user_agent
+			'user-agent' => self::$fake_user_agent,
 		);
 		$response = wp_remote_get( COVID19_PUBLIC_API . $endpoint, $args );
 		if ( is_wp_error( $response ) || 200 != wp_remote_retrieve_response_code( $response ) ) {
@@ -77,7 +85,7 @@ class Register_API {
 			return (array) Helper\reformat_response( array(
 				'cached_response' => 'yes',
 				'modified_at'     => $data['updated'],
-				'data'            => $data
+				'data'            => $data,
 			) );
 
 		} else {
@@ -92,7 +100,7 @@ class Register_API {
 			return (array) Helper\reformat_response( array(
 				'cached_response' => 'no',
 				'modified_at'     => $data['updated'],
-				'data'            => $data
+				'data'            => $data,
 			) );
 
 		}
@@ -100,6 +108,7 @@ class Register_API {
 
 	/**
 	 * Global Data Callback
+	 *
 	 * @return \WP_Error | \WP_REST_Response
 	 */
 	public static function c19_global_api_callback() {
@@ -121,7 +130,7 @@ class Register_API {
 	 */
 	public static function c19_country_api_callback( $request ) {
 		$country = sanitize_title( $request['country'] );
-		$data = self::c19_get_data( '/v3/covid-19/countries/' . $country, 'wsb_cv19_data_country__' . $country );
+		$data    = self::c19_get_data( '/v3/covid-19/countries/' . $country, 'wsb_cv19_data_country__' . $country );
 
 		if ( empty( $data ) ) {
 			return new \WP_Error( 'no_data', 'Oopss!! Data is not available or maybe the data provider website is down. check out ' . COVID19_PUBLIC_API . '. Please try again later.', array( 'status' => 200 ) );
