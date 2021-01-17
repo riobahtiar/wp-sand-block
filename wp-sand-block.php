@@ -51,7 +51,7 @@ Register_API::Init();
  * Block
  */
 
-require_once 'blocks/covid-19-global-stats.php';
+require_once 'blocks/covid-19-stats.php';
 
 
 

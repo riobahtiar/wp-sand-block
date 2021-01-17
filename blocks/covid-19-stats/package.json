@@ -1,7 +1,7 @@
 {
-	"name": "covid-19-global-stats",
+	"name": "covid-19-stats",
 	"version": "0.1.0",
-	"description": "Covid-19 Global Stats Widget",
+	"description": "COVID-19 Statistics Widget",
 	"author": "Rio Bahtiar",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",

@@ -1,6 +1,6 @@
 {
-	"name": "wp-sand-block/covid-19-global-stats",
-	"title": "Covid-19 Global Stats",
+	"name": "wp-sand-block/covid-19-stats",
+	"title": "COVID-19 Statistics",
 	"category": "widgets",
 	"icon": "smiley",
 	"description": "Covid-19 Widget block written with ESNext standard and JSX support.",

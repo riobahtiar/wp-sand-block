@@ -33,18 +33,18 @@ import Edit from './edit';
  *
  * @see https://developer.wordpress.org/block-editor/developers/block-api/#registering-a-block
  */
-registerBlockType( 'wp-sand-block/covid-19-global-stats', {
+registerBlockType( 'wp-sand-block/covid-19-stats', {
 	/**
 	 * This is the display title for your block, which can be translated with `i18n` functions.
 	 * The block inserter will show this name.
 	 */
-	title: __( 'Covid-19 Global', 'wp-sand-block' ),
+	title: __( 'COVID-19 Stats', 'wp-sand-block' ),
 
 	/**
 	 * This is a short description for your block, can be translated with `i18n` functions.
 	 * It will be shown in the Block Tab in the Settings Sidebar.
 	 */
-	description: __( 'Covid19 Global Stats', 'wp-sand-block' ),
+	description: __( 'COVID-19 Statistics', 'wp-sand-block' ),
 
 	/**
 	 * Blocks are grouped into categories to help users browse and discover them.
@@ -59,7 +59,7 @@ registerBlockType( 'wp-sand-block/covid-19-global-stats', {
 	icon: iconVirusGlobal,
 	example: {
 		attributes: {
-			content: ' Hello World :) ',
+			country: 'world',
 		},
 	},
 	keywords: [
@@ -69,14 +69,8 @@ registerBlockType( 'wp-sand-block/covid-19-global-stats', {
 		__( 'covid-19' ),
 	],
 	attributes: {
-		title: {
-			source: 'text',
-			selector: '.slider__title',
-		},
-		content: {
-			type: 'array',
-			source: 'children',
-			selector: 'p',
+		country: {
+			type: 'string',
 		},
 	},
 

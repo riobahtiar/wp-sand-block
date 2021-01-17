@@ -7,6 +7,8 @@ import { __ } from '@wordpress/i18n';
 import { useBlockProps } from '@wordpress/block-editor';
 import { SelectControl } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
+import countryData from './data/country.json';
+
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
  * Those files can contain any CSS code that gets applied to the editor.
@@ -35,42 +37,31 @@ import { GlobalWidget } from './global-widget';
 // 	);
 // }
 
-export default function Edit( { attributes, isSelected } ) {
-	const {
-		attributes: { content },
-		setAttributes,
-		className,
-	} = props;
+export default function Edit( { attributes, setAttributes, isSelected } ) {
 	const blockProps = useBlockProps();
-	const onChangeContent = ( newContent ) => {
-		setAttributes( { content: newContent } );
-	};
+
 	return (
 		<div { ...blockProps }>
 			<GlobalWidget />
 			{ isSelected && (
 				<div className={ 'form-edit' }>
 					{ __( 'Shows only when the block is selected.' ) }
-					<MySelectControl />
+					<SelectCountry setAttributes={ setAttributes } />
 				</div>
 			) }
 		</div>
 	);
 }
 
-const MySelectControl = withState( {
-	size: '50%',
-} )( ( { size, setState } ) => (
+const SelectCountry = withState( {
+	country: 'world',
+} )( ( { country, setAttributes, setState } ) => (
 	<SelectControl
-		label="Size"
-		value={ size }
-		options={ [
-			{ label: 'Big', value: '100%' },
-			{ label: 'Medium', value: '50%' },
-			{ label: 'Small', value: '25%' },
-		] }
-		onChange={ ( size ) => {
-			setState( { size } );
+		label="Select Country"
+		value={ country }
+		options={ countryData }
+		onChange={ ( country ) => {
+			setState( { country } ), setAttributes( { country } );
 		} }
 	/>
 ) );
