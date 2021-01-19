@@ -1,6 +1,6 @@
 <?php
 /**
- * Functions to Handle Frontend
+ * Handle Rendered Frontend
  *
  * @package wp-sand-block
  * @link https://developer.wordpress.org/block-editor/tutorials/block-tutorial/creating-dynamic-blocks/
@@ -9,32 +9,29 @@
  use SandBlock\Core\Register_API;
 
 function covid_19_stats_render_callback( $block_attributes, $content ) {
-	
-	if ( isset($block_attributes) && $block_attributes['country'] !== 'world' ){
-		$data = Register_API::c19_get_data( '/v3/covid-19/countries/' . $block_attributes['country'], 'wsb_cv19_data_country__' . $block_attributes['country'] );
-	}else{
-		$data = Register_API::c19_get_data( '/v3/covid-19/all', 'wsb_cv19_global_data' );
+	$area = sanitize_title( $block_attributes['country'] ?? 'world' );
+	if ( isset( $block_attributes ) && $area !== 'world' ) {
+		$data  = Register_API::c19_get_data( '/v3/covid-19/countries/' . $area, 'wsb_cv19_data_country__' . $area );
+		$notes = sprintf( __( "Coronavirus data from <b>%s</b> is provided by <b>worldometers.info</b> via <b>disease.sh</b> Public API's", 'wp-sand-block' ), $data['data']['raw']['country'] );
+	} else {
+		$data  = Register_API::c19_get_data( '/v3/covid-19/all', 'wsb_cv19_global_data' );
+		$notes = __( "Coronavirus data is provided by <b>worldometers.info</b> via <b>disease.sh</b> Public API's", 'wp-sand-block' );
 	}
-$data_raw = $data['data']['raw'];
-$data_hr = $data['data']['human_readable'];
+	$data_raw = $data['data']['raw'];
+	$data_hr  = $data['data']['human_readable'];
 
+	$today_cases     = $data_hr['today_cases'] ? '<div class="wsb-card__textSubNumber">' . sprintf( __( 'Today Cases: %s', 'wp-sand-block' ), $data_hr['today_cases'] ) . '</div>' : '';
+	$critical        = $data_hr['critical'] ? '<div class="wsb-card__textSubNumber">' . sprintf( __( 'Critical: %s', 'wp-sand-block' ), $data_hr['critical'] ) . '</div>' : '';
+	$today_recovered = $data_hr['today_recovered'] ? '<div class="wsb-card__textSubNumber">' . sprintf( __( 'Today Recovered: %s', 'wp-sand-block' ), $data_hr['today_recovered'] ) . '</div>' : '';
+	$today_deaths    = $data_hr['today_deaths'] ? '<div class="wsb-card__textSubNumber">' . sprintf( __( 'Today Deaths: %s', 'wp-sand-block' ), $data_hr['today_deaths'] ) . '</div>' : '';
 
-
-	
-
-
-	
-	
 	$content = '<div class="wsb-main-container">
-			<div class="wsd-title">
-			<h3>COVID-19 GLOBAL DATA</h3>
-            </div>
 		<div class="wsb">
 			<div class="wsb-card wsb-confirmed">
 				<div class="wsb-card__text">
 					<h4 class="wsb-card__textTitle">' . __( 'Confirmed', 'wp-sand-block' ) . '</h4>
 					<div class="wsb-card__textNumber">' . $data_hr['cases'] . '</div>
-					<div class="wsb-card__textSubNumber">21.999</div>
+					' . $today_cases . '
 				</div>
 				<div class="wsb-card__icon">
 					<img src="' . plugin_dir_url( __FILE__ ) . 'covid-19-stats/src/img/virus.svg" class="wsb-card__iconImg" alt="">
@@ -44,7 +41,7 @@ $data_hr = $data['data']['human_readable'];
 				<div class="wsb-card__text">
 					<h4 class="wsb-card__textTitle">' . __( 'Active Cases', 'wp-sand-block' ) . '</h4>
 					<div class="wsb-card__textNumber">' . $data_hr['active'] . '</div>
-					<div class="wsb-card__textSubNumber">21.999</div>
+					' . $critical . '
 				</div>
 				<div class="wsb-card__icon">
 					<img src="' . plugin_dir_url( __FILE__ ) . 'covid-19-stats/src/img/sick.svg" class="wsb-card__iconImg" alt="">
@@ -53,8 +50,8 @@ $data_hr = $data['data']['human_readable'];
 			<div class="wsb-card wsb-recovered">
 				<div class="wsb-card__text">
 					<h4 class="wsb-card__textTitle">' . __( 'Recovered', 'wp-sand-block' ) . '</h4>
-					<div class="wsb-card__textNumber">' . $data_hr['recovered']  . '</div>
-					<div class="wsb-card__textSubNumber">21.999</div>
+					<div class="wsb-card__textNumber">' . $data_hr['recovered'] . '</div>
+					' . $today_recovered . '
 				</div>
 				<div class="wsb-card__icon">
 					<img src="' . plugin_dir_url( __FILE__ ) . 'covid-19-stats/src/img/heart.svg" class="wsb-card__iconImg" alt="">
@@ -63,29 +60,22 @@ $data_hr = $data['data']['human_readable'];
 			<div class="wsb-card wsb-deaths">
 				<div class="wsb-card__text">
 					<h4 class="wsb-card__textTitle">' . __( 'Deaths', 'wp-sand-block' ) . '</h4>
-					<div class="wsb-card__textNumber">' . $data_hr['deaths']  . '</div>
-					<div class="wsb-card__textSubNumber">21.999</div>
+					<div class="wsb-card__textNumber">' . $data_hr['deaths'] . '</div>
+					' . $today_deaths . '
 				</div>
 				<div class="wsb-card__icon">
 					<img src="' . plugin_dir_url( __FILE__ ) . 'covid-19-stats/src/img/warning.svg" class="wsb-card__iconImg" alt="">
 				</div>
 			</div>
 		</div>
-		<div class="wsb-notes">
-		Pembaruan Terakhir <pre>' . json_encode( $block_attributes['country'] ) . '</pre><hr><pre>' . json_encode( $content ) . '</pre>
-		<time>13 Januari 2021 16:32:27 +07:00</time>
-		</div>
-	</div>
-
-	';
+		<div class="wsb-notes"> 
+			' . sprintf( __( 'Last updated: <time>%s</time>. ', 'wp-sand-block' ), date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $data['header']['modified_at'] ) ) ) .
+			' <span class="credits"> ' . $notes . '</span>
+		</div>	
+	</div>';
 
 	return $content;
 
-	// return sprintf(
-	// '<a class="wp-block-my-plugin-latest-post" href="%1$s">%2$s</a>',
-	// esc_url( get_permalink( $post_id ) ),
-	// esc_html( get_the_title( $post_id ) )
-	// );
 }
 
 /**

@@ -1,1 +1,18 @@
-@import "style";
+
+.wsb-editor{
+    width: auto;
+    padding: 15px;
+    border:solid 2px rgb(16, 184, 1);
+
+    h3{
+        text-align: center;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+    .field-form{
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 15px;
+    }
+}
