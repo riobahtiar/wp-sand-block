@@ -3,5 +3,5 @@ Experimental Block. Please don't use this plugin in production, some features ar
 
 ## Available Blocks
 
-![alt text](https://raw.githubusercontent.com/riobahtiar/wp-sand-block/master/blocks/covid-19-stats/src/img/screenshot.png "COVID-19 Statistics")
+![alt text](https://github.com/riobahtiar/wp-sand-block/blob/master/blocks/covid-19-stats/src/img/screenshot.jpg "COVID-19 Statistics")
 #### COVID-19 Statistics | [Demo](http://bit.ly/covid19-wp-block)
