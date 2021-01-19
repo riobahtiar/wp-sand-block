@@ -25,13 +25,13 @@ class Register_API {
 	 * Register API
 	 */
 	public static function c19_api_registration() {
-		// Global Data
+		// World Data
 		register_rest_route(
 			self::$api_path,
-			'/global',
+			'/world',
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => array( __CLASS__, 'c19_global_api_callback' ),
+				'callback'            => array( __CLASS__, 'c19_world_api_callback' ),
 				'permission_callback' => '__return_true',
 			)
 		);
@@ -108,12 +108,12 @@ class Register_API {
 	}
 
 	/**
-	 * Global Data Callback
+	 * World Data Callback
 	 *
 	 * @return \WP_Error | \WP_REST_Response
 	 */
-	public static function c19_global_api_callback() {
-		$data = self::c19_get_data( '/v3/covid-19/all', 'wsb_cv19_global_data' );
+	public static function c19_world_api_callback() {
+		$data = self::c19_get_data( '/v3/covid-19/all', 'wsb_cv19_world_data' );
 
 		if ( empty( $data ) ) {
 			return new \WP_Error( 'no_data', 'Oopss!! Data is not available or maybe the data provider website is down. check out ' . COVID19_PUBLIC_API . '. Please try again later.', array( 'status' => 200 ) );
