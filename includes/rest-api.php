@@ -61,6 +61,7 @@ class Register_API {
 			'user-agent' => self::$fake_user_agent,
 		);
 		$response = wp_remote_get( COVID19_PUBLIC_API . $endpoint, $args );
+
 		if ( is_wp_error( $response ) || 200 != wp_remote_retrieve_response_code( $response ) ) {
 			return false;
 		}
@@ -129,11 +130,11 @@ class Register_API {
 	 * @return \WP_Error | \WP_REST_Response
 	 */
 	public static function c19_country_api_callback( $request ) {
-		$country = sanitize_title( $request['country'] );
+		$country = sanitize_title( $request['country'] ?? 'world' );
 		$data    = self::c19_get_data( '/v3/covid-19/countries/' . $country, 'wsb_cv19_data_country__' . $country );
 
 		if ( empty( $data ) ) {
-			return new \WP_Error( 'no_data', 'Oopss!! Data is not available or maybe the data provider website is down. check out ' . COVID19_PUBLIC_API . '. Please try again later.', array( 'status' => 200 ) );
+			return new \WP_Error( 'no_data', 'Oopss!! Data is not available(Country not found) or maybe the data provider website is down. check out ' . COVID19_PUBLIC_API . '. Please try again later.', array( 'status' => 200 ) );
 		}
 
 		return new \WP_REST_Response( $data, 200 );
