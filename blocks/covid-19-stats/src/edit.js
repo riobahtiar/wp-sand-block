@@ -31,7 +31,7 @@ const SelectCountry = withState( {
 	country: 'world',
 } )( ( { attributes, setAttributes, setState } ) => (
 	<SelectControl
-		label="Select Country"
+		label={__('Select Country')} 
 		value={ attributes.country }
 		options={ countryData }
 		onChange={ ( country ) => {
