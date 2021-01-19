@@ -12,10 +12,10 @@ function covid_19_stats_render_callback( $block_attributes, $content ) {
 	$area = sanitize_title( $block_attributes['country'] ?? 'world' );
 	if ( isset( $block_attributes ) && $area !== 'world' ) {
 		$data  = Register_API::c19_get_data( '/v3/covid-19/countries/' . $area, 'wsb_cv19_data_country__' . $area );
-		$notes = sprintf( __( "Coronavirus data from <b>%s</b> is provided by <b>worldometers.info</b> via <b>disease.sh</b> Public API's", 'wp-sand-block' ), $data['data']['raw']['country'] );
+		$notes = sprintf( __( "Coronavirus data from <b>%s</b> is Provided by <b>worldometers.info</b> via <b>disease.sh</b> public API's", 'wp-sand-block' ), $data['data']['raw']['country'] );
 	} else {
 		$data  = Register_API::c19_get_data( '/v3/covid-19/all', 'wsb_cv19_world_data' );
-		$notes = __( "Coronavirus data is provided by <b>worldometers.info</b> via <b>disease.sh</b> Public API's", 'wp-sand-block' );
+		$notes = __( "Coronavirus data is Provided by <b>worldometers.info</b> via <b>disease.sh</b> public API's", 'wp-sand-block' );
 	}
 	$data_raw = $data['data']['raw'];
 	$data_hr  = $data['data']['human_readable'];
